@@ -1,0 +1,4 @@
+{
+  "text": "Please help me understand how to implement authentication in my application. I need to know about JWT tokens, how they work, how to validate them, and how to handle token expiration. I would really appreciate a detailed explanation with code examples if possible. Thank you so much for your help!",
+  "strategy": "balanced"
+}

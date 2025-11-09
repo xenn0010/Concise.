@@ -1,0 +1,4 @@
+{
+  "text": "I am working on a project that requires user authentication. I need to understand how to implement a secure login system using JWT tokens. Can you please explain to me step by step how to create the authentication middleware, how to generate tokens, how to validate them, and how to handle token expiration? I would really appreciate a detailed explanation with code examples if possible. Thank you so much for your help! The authentication system in our application is built using JSON Web Tokens (JWT). When a user logs in, the server validates their credentials against the database. If the credentials are correct, the server generates a JWT token that contains the user's ID, email, and role.",
+  "strategy": "balanced"
+}

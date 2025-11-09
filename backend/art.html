@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ASCII 3D Wobble</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#000; color:#e6e6e6; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+  header { position:fixed; inset:0 auto auto 0; padding:10px 12px; background:rgba(0,0,0,.6); backdrop-filter: blur(6px); z-index:2; display:flex; gap:12px; align-items:center; }
+  input[type=file], input[type=range] { accent-color:#e6e6e6; }
+  #ascii { white-space: pre; line-height: 0.9; font-size: 10px; padding: 60px 12px 12px; }
+  #hidden { position:fixed; left:-9999px; top:-9999px; visibility:hidden; }
+  .btn { cursor:pointer; background:#111; border:1px solid #333; padding:6px 10px; border-radius:8px; }
+  .small { font-size: 12px; opacity:.7; }
+</style>
+</head>
+<body>
+  <header>
+    <input id="file" type="file" accept="image/*" />
+    <label class="small">Cols <input id="cols" type="range" min="60" max="220" value="120"></label>
+    <button id="save" class="btn">Save GIF (frames)</button>
+    <span class="small">Upload your “C” image, then it animates.</span>
+  </header>
+
+  <pre id="ascii"></pre>
+
+  <!-- offscreen canvases -->
+  <canvas id="hidden" width="1024" height="1024"></canvas>
+  <canvas id="hidden2" width="1024" height="1024"></canvas>
+
+<script>
+(() => {
+  const fileInput = document.getElementById('file');
+  const asciiEl = document.getElementById('ascii');
+  const colsSlider = document.getElementById('cols');
+  const saveBtn = document.getElementById('save');
+
+  const srcCanvas = document.getElementById('hidden');
+  const rotCanvas = document.getElementById('hidden2');
+  const srcCtx = srcCanvas.getContext('2d', { willReadFrequently: true });
+  const rotCtx = rotCanvas.getContext('2d', { willReadFrequently: true });
+
+  const CHARSET = " .:-=+*#%@"; // dark → light
+  const levels = CHARSET.length - 1;
+
+  let img = new Image();
+  let ready = false;
+  let t0 = performance.now();
+  let framesForSave = []; // plain-text frames (optional export)
+
+  function fitToSquare(w, h) {
+    const S = Math.max(w, h);
+    srcCanvas.width = srcCanvas.height = S;
+    rotCanvas.width = rotCanvas.height = S;
+    // clear
+    srcCtx.fillStyle = "#000";
+    srcCtx.fillRect(0, 0, S, S);
+    // center
+    const dx = (S - w) >> 1;
+    const dy = (S - h) >> 1;
+    return { S, dx, dy };
+  }
+
+  function drawSource() {
+    const { width: w, height: h } = img;
+    const { S, dx, dy } = fitToSquare(w, h);
+    srcCtx.drawImage(img, dx, dy, w, h);
+    return S;
+  }
+
+  function toASCII(imageData, cols) {
+    const S = rotCanvas.width;
+    // char aspect compensation (~2:1 height:width)
+    const w = cols;
+    const h = Math.max(1, Math.floor(S * (w / S) * 0.5));
+    // scale into small canvas via ImageData sampling
+    // create a temporary canvas for sampling
+    const tmp = document.createElement('canvas');
+    tmp.width = w; tmp.height = h;
+    const tctx = tmp.getContext('2d');
+    // put the rotated pixels, scaled down
+    const srcTmp = document.createElement('canvas');
+    srcTmp.width = S; srcTmp.height = S;
+    srcTmp.getContext('2d').putImageData(imageData, 0, 0);
+    tctx.drawImage(srcTmp, 0, 0, w, h);
+
+    const small = tctx.getImageData(0, 0, w, h).data;
+    let out = '';
+    for (let y = 0; y < h; y++) {
+      let line = '';
+      for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4;
+        const r = small[i], g = small[i+1], b = small[i+2];
+        const lum = (0.2126*r + 0.7152*g + 0.0722*b);
+        const idx = Math.round((lum / 255) * levels);
+        line += CHARSET[idx];
+      }
+      out += line + (y === h-1 ? '' : '\n');
+    }
+    return out;
+  }
+
+  function vignetteOn(ctx, S) {
+    // radial vignette multiply for pseudo depth
+    const imgData = ctx.getImageData(0, 0, S, S);
+    const d = imgData.data;
+    const cx = S/2, cy = S/2, maxR = S/2;
+    for (let y=0; y<S; y++) {
+      for (let x=0; x<S; x++) {
+        const dx = x - cx, dy = y - cy;
+        const r = Math.hypot(dx, dy) / maxR;
+        const v = Math.max(0, Math.min(1, 1.2 - 0.6*r)); // 1.2 → 0.6 falloff
+        const i = (y*S + x) * 4;
+        d[i]   = d[i]   * v;
+        d[i+1] = d[i+1] * v;
+        d[i+2] = d[i+2] * v;
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    return ctx.getImageData(0, 0, S, S);
+  }
+
+  function animate(now) {
+    if (!ready) { requestAnimationFrame(animate); return; }
+    const S = rotCanvas.width;
+
+    const phase = (now - t0) / 1000; // seconds
+    const theta = (10 * Math.sin(2*Math.PI * phase / 2)) * Math.PI/180; // ±10° over 2s
+    const z = 1 + 0.07 * Math.sin(2*Math.PI * phase / 2 + Math.PI/3);   // subtle wobble
+
+    rotCtx.setTransform(1,0,0,1,0,0);
+    rotCtx.clearRect(0,0,S,S);
+    rotCtx.translate(S/2, S/2);
+    rotCtx.rotate(theta);
+    rotCtx.scale(z, z);
+    rotCtx.translate(-S/2, -S/2);
+    rotCtx.drawImage(srcCanvas, 0, 0);
+
+    const imgData = vignetteOn(rotCtx, S);
+    const ascii = toASCII(imgData, parseInt(colsSlider.value,10));
+    asciiEl.textContent = ascii;
+
+    // keep a small circular buffer of frames for optional export
+    if (framesForSave.length < 64) framesForSave.push(ascii);
+
+    requestAnimationFrame(animate);
+  }
+
+  fileInput.addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const url = URL.createObjectURL(f);
+    img = new Image();
+    img.onload = () => { drawSource(); ready = true; };
+    img.src = url;
+  });
+
+  colsSlider.addEventListener('input', () => { /* redraw next frame */ });
+
+  // rudimentary GIF export: save frames as text file bundle (one per line separator)
+  // If you need an actual GIF, copy frames to an encoder later.
+  saveBtn.addEventListener('click', () => {
+    const blob = new Blob([framesForSave.join("\n===FRAME===\n")], {type:'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ascii_frames.txt';
+    a.click();
+  });
+
+  requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>

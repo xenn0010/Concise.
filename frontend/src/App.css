@@ -1,0 +1,332 @@
+:root {
+  color-scheme: dark;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 3rem clamp(1.5rem, 4vw, 4rem) 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  background: radial-gradient(circle at top, #101014, #050506 70%);
+  color: #f7f8fa;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand__glyph {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.brand p {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.brand span {
+  font-size: 0.85rem;
+  color: rgba(247, 248, 250, 0.7);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.nav__actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+}
+
+.hero__text h1 {
+  margin: 0.75rem 0 1.25rem;
+  font-size: clamp(2.8rem, 7vw, 4.5rem);
+  line-height: 1.05;
+}
+
+.hero__text p {
+  margin: 0;
+  max-width: 60ch;
+  color: rgba(247, 248, 250, 0.75);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.hero__visual {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+    0 40px 80px rgba(0, 0, 0, 0.45);
+}
+
+.kicker {
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: rgba(247, 248, 250, 0.6);
+}
+
+.hero__cta {
+  margin: 2rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.metrics article {
+  padding: 1.25rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.metrics p {
+  margin: 0;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: rgba(247, 248, 250, 0.5);
+}
+
+.metrics h3 {
+  margin: 0.35rem 0;
+  font-size: 1.75rem;
+}
+
+.metrics span {
+  color: rgba(247, 248, 250, 0.65);
+  font-size: 0.85rem;
+}
+
+.ascii {
+  font-family: 'JetBrains Mono', 'Alliance No2', monospace;
+  font-size: 0.75rem;
+  line-height: 1.1;
+  color: rgba(247, 248, 250, 0.9);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  animation: float 6s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.hero__callout {
+  border-radius: 24px;
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.hero__callout p {
+  margin: 0;
+  color: rgba(247, 248, 250, 0.75);
+}
+
+.hero__callout h4 {
+  margin: 0.35rem 0;
+}
+
+.hero__callout span {
+  font-size: 0.85rem;
+  color: rgba(247, 248, 250, 0.6);
+}
+
+.snippets {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.snippets__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.lang-toggle {
+  display: inline-flex;
+  gap: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.3rem;
+}
+
+.lang-toggle button {
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  border: none;
+  background: transparent;
+  color: rgba(247, 248, 250, 0.7);
+}
+
+.lang-toggle button.active {
+  background: #fff;
+  color: #07070a;
+}
+
+.snippet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.code-card {
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.code-card header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: rgba(247, 248, 250, 0.6);
+}
+
+pre {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(5, 5, 5, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: auto;
+}
+
+code {
+  font-family: 'JetBrains Mono', 'Alliance No2', monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.docs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.docs__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.docs__grid article {
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(5, 5, 5, 0.4);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.docs__grid footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.docs__grid span {
+  font-size: 0.85rem;
+  color: rgba(247, 248, 250, 0.65);
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.65rem 1.4rem;
+  font-size: 0.95rem;
+  font-family: 'Alliance No2', 'Inter', sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #fff;
+  color: #050505;
+}
+
+button.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f7f8fa;
+}
+
+button.ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(247, 248, 250, 0.8);
+}
+
+button:hover:not(.ghost) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .nav {
+    flex-direction: column;
+  }
+
+  .nav__actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
